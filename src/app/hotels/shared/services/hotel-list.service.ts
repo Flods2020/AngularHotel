@@ -46,7 +46,7 @@ export class HotelListService {
   }
 
   public updateHotel(hotel: IHotel): Observable<IHotel> {
-    const url = `${this.HOTEL_API_URL}/${hotel.id}000`;
+    const url = `${this.HOTEL_API_URL}/${hotel.id}`;
     return this.http.post<IHotel>(url, hotel).pipe(catchError(this.handleError));
   }
 
