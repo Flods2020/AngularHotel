@@ -29,7 +29,7 @@ export class HotelEditComponent implements OnInit, AfterViewInit {
     price: {
       required: 'Le prix de l\'hôtel est obligatoire'
     }
-  }
+  };
 
   private globalGenericValidator: GlobalGenericValidator | undefined;
 
@@ -58,9 +58,11 @@ export class HotelEditComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngAfterViewInit(): void {
+  ngAfterViewInit() {
     if (this.globalGenericValidator) {
       this.formErrors = this.globalGenericValidator.createErrorMessage(this.hotelForm);
+      // console.log('this.formErrors ', this.formErrors['hotelName']);
+
     }
   }
 

@@ -7,7 +7,7 @@ export class GlobalGenericValidator {
     ) { }
 
     public createErrorMessage(container: FormGroup): { [key: string]: string } {
-        const errorMessages: string | any = {};
+        const errorMessages: any = {};
 
         for (const controlName in container.controls) {
             if (container.controls.hasOwnProperty(controlName)) {
