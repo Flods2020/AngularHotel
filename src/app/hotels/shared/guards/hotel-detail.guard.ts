@@ -17,8 +17,8 @@ export class HotelDetailGuard implements CanActivate {
       const id: number = +route.url[1].path;
       
       // const id: number | any = route.url[1].path;
-      console.log('id type ', typeof(id));
-      console.log(id);
+      // console.log('id type ', typeof(id));
+      // console.log(id);
       // const id: number | any = route.url[1].path donne le mot 'list' donc pas un number
       // const id: number = +route.url[1].path; ne peut pas convertir 'list' en number
         // donc la condition isNaN(id) est true

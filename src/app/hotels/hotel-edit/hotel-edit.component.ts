@@ -1,16 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { IHotel } from '../shared/models/hotel';
 import { HotelListService } from '../shared/services/hotel-list.service';
+import { GlobalGenericValidator } from '../shared/validators/global-generic.validator';
 
 @Component({
   selector: 'app-hotel-edit',
   templateUrl: './hotel-edit.component.html',
   styleUrls: ['./hotel-edit.component.css'],
 })
-export class HotelEditComponent implements OnInit {
+export class HotelEditComponent implements OnInit, AfterViewInit {
   public hotelForm: FormGroup | any;
 
   public hotel: IHotel | undefined;
@@ -19,14 +20,28 @@ export class HotelEditComponent implements OnInit {
 
   public errorMessage: string | undefined;
 
+  public formErrors: { [key: string]: string } = {};
+
+  private validationMessages: { [key: string]: { [key: string]: string } } = {
+    hotelName: {
+      required: 'Le nom de l\'hôtel est obligatoire'
+    },
+    price: {
+      required: 'Le prix de l\'hôtel est obligatoire'
+    }
+  }
+
+  private globalGenericValidator: GlobalGenericValidator | undefined;
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     private hotelService: HotelListService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
+    this.globalGenericValidator = new GlobalGenericValidator(this.validationMessages);
     this.hotelForm = this.fb.group({
       hotelName: ['', Validators.required],
       price: ['', Validators.required],
@@ -41,6 +56,12 @@ export class HotelEditComponent implements OnInit {
 
       this.getSelectedHotel(id);
     });
+  }
+
+  ngAfterViewInit(): void {
+    if (this.globalGenericValidator) {
+      this.formErrors = this.globalGenericValidator.createErrorMessage(this.hotelForm);
+    }
   }
 
   public hideError(): void {

@@ -10,7 +10,7 @@ export class HotelListService {
   // private readonly HOTEL_API_URL = 'api/hotels.json';
   private readonly HOTEL_API_URL = 'api/hotels';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   public getHotels(): Observable<IHotel[]> {
     return this.http.get<IHotel[]>(this.HOTEL_API_URL).pipe(
@@ -78,7 +78,7 @@ export class HotelListService {
       );
       errorMessage = `Backend returned code ${error.status}, ` + `body was : ${error.error}`
     }
-    return throwError('Something wrong happened... Please try again later.' + 
-    '\n' + errorMessage);
+    return throwError('Something wrong happened... Please try again later.' +
+      '\n' + errorMessage);
   }
 }
