@@ -6,7 +6,7 @@ export class GlobalGenericValidator {
         private validatorMessages: { [key: string]: { [key: string]: string } }
     ) { }
 
-    public createErrorMessage(container: FormGroup): { [key: string]: string } {
+    public createErrorMessage(container: FormGroup, isFormSubmitted?: boolean): { [key: string]: string } {
         const errorMessages: any = {};
 
         for (const controlName in container.controls) {
@@ -16,7 +16,7 @@ export class GlobalGenericValidator {
                 if (this.validatorMessages[controlName]) {
                     errorMessages[controlName] = '';
 
-                    if ((selectedControl.dirty || selectedControl.touched) && selectedControl.errors) {
+                    if ((selectedControl.dirty || selectedControl.touched || isFormSubmitted) && selectedControl.errors) {
                         Object.keys(selectedControl.errors).map((errorMessageKey: string) => {
                             if (this.validatorMessages[controlName][errorMessageKey]) {
                                 errorMessages[controlName] += this.validatorMessages[controlName][errorMessageKey] + ' '

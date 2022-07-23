@@ -1,10 +1,11 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormControlName, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { from, fromEvent, merge, Observable } from 'rxjs';
+import { debounce, debounceTime, EMPTY, from, fromEvent, merge, Observable, timer } from 'rxjs';
 import { IHotel } from '../shared/models/hotel';
 import { HotelListService } from '../shared/services/hotel-list.service';
 import { GlobalGenericValidator } from '../shared/validators/global-generic.validator';
+import { NumberValidator } from '../shared/validators/numbers.validators';
 
 @Component({
   selector: 'app-hotel-edit',
@@ -28,14 +29,22 @@ export class HotelEditComponent implements OnInit, AfterViewInit {
 
   private validationMessages: { [key: string]: { [key: string]: string } } = {
     hotelName: {
-      required: 'Le nom de l\'hôtel est obligatoire'
+      required: 'Le nom de l\'hôtel est obligatoire',
+      minlength: 'Le nom de l\'hotel doit comporter au moins 4 caractères'
     },
     price: {
-      required: 'Le prix de l\'hôtel est obligatoire'
+      required: 'Le prix de l\'hôtel est obligatoire',
+      pattern: 'Le prix de l\'hôtel doit être un nombre'
+    },
+    rating: {
+      required: 'Veuilez donner une note comprise entre 1 et 5 svp',
+      range: 'Donnez une note entre 1 et 5'
     }
   };
 
   private globalGenericValidator: GlobalGenericValidator | undefined;
+
+  private isFormSubmitted: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -47,9 +56,12 @@ export class HotelEditComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.globalGenericValidator = new GlobalGenericValidator(this.validationMessages);
     this.hotelForm = this.fb.group({
-      hotelName: ['', Validators.required],
-      price: ['', Validators.required],
-      rating: [''],
+      hotelName: ['',
+        [Validators.required, Validators.minLength(4)]],
+      price: ['',
+        [Validators.required, Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
+      rating: ['',
+        Validators.required, NumberValidator.range(1, 5)],
       description: [''],
       tags: this.fb.array([]),
     });
@@ -70,6 +82,10 @@ export class HotelEditComponent implements OnInit, AfterViewInit {
         .map((formControlElemRef: ElementRef) => fromEvent(formControlElemRef.nativeElement, 'blur'));
 
       merge(this.hotelForm.valueChanges, ...formControlBlurs)
+        .pipe(
+          // debounceTime(800)
+          debounce(() => this.isFormSubmitted ? EMPTY : timer(800))
+        )
         .subscribe(() => {
           if (this.globalGenericValidator) {
             this.formErrors = this.globalGenericValidator.createErrorMessage(this.hotelForm);
@@ -130,6 +146,13 @@ export class HotelEditComponent implements OnInit, AfterViewInit {
   }
 
   public saveHotel(): void {
+    this.isFormSubmitted = true;
+
+    this.hotelForm.updateValueAndValidity({
+      onlySelf: true,
+      emitEvent: true
+    });
+
     console.log('hotel Name: ', this.hotelForm.value.hotelName);
 
     if (this.hotelForm.valid) {
@@ -149,10 +172,13 @@ export class HotelEditComponent implements OnInit, AfterViewInit {
             next: () => this.saveCompleted(),
             error: (err) => this.errorMessage = err
           });
+          console.log('saveHotel(): ', this.hotelForm.value);
         }
-        console.log('saveHotel(): ', this.hotelForm.value);
       }
+    } else {
+      this.errorMessage = 'Corrigez les erreurs svp';
     }
+    console.log('saveHotel(): ', this.hotelForm.value);
   }
 
   public deleteHotel(): void {
