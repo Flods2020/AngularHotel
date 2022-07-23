@@ -1,7 +1,7 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewChildren } from '@angular/core';
+import { FormArray, FormBuilder, FormControl, FormControlName, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { from, fromEvent, merge, Observable } from 'rxjs';
 import { IHotel } from '../shared/models/hotel';
 import { HotelListService } from '../shared/services/hotel-list.service';
 import { GlobalGenericValidator } from '../shared/validators/global-generic.validator';
@@ -12,6 +12,10 @@ import { GlobalGenericValidator } from '../shared/validators/global-generic.vali
   styleUrls: ['./hotel-edit.component.css'],
 })
 export class HotelEditComponent implements OnInit, AfterViewInit {
+
+  // @ViewChild('test', { static: true }) test: ElementRef | undefined;
+  @ViewChildren(FormControlName, { read: ElementRef }) inputElements: ElementRef[] | undefined;
+
   public hotelForm: FormGroup | any;
 
   public hotel: IHotel | undefined;
@@ -53,16 +57,26 @@ export class HotelEditComponent implements OnInit, AfterViewInit {
     this.route.paramMap.subscribe((params) => {
       const id: number | any = params.get('id');
       console.log(id);
-
       this.getSelectedHotel(id);
     });
   }
 
   ngAfterViewInit() {
-    if (this.globalGenericValidator) {
-      this.formErrors = this.globalGenericValidator.createErrorMessage(this.hotelForm);
-      // console.log('this.formErrors ', this.formErrors['hotelName']);
+    // if (this.test) {
+    //   this.test.nativeElement.value = 'test de afterview';
+    // }
+    if (this.inputElements) {
+      const formControlBlurs: Observable<unknown>[] = this.inputElements
+        .map((formControlElemRef: ElementRef) => fromEvent(formControlElemRef.nativeElement, 'blur'));
 
+      merge(this.hotelForm.valueChanges, ...formControlBlurs)
+        .subscribe(() => {
+          if (this.globalGenericValidator) {
+            this.formErrors = this.globalGenericValidator.createErrorMessage(this.hotelForm);
+            console.log('errors: ', this.formErrors);
+            // console.log('this.formErrors ', this.formErrors['hotelName']);
+          }
+        })
     }
   }
 
