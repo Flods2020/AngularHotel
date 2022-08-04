@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IHotel } from '../shared/models/hotel';
 import { HotelListService } from '../shared/services/hotel-list.service';
@@ -9,9 +10,10 @@ import { HotelListService } from '../shared/services/hotel-list.service';
   templateUrl: './hotel-detail.component.html',
   styleUrls: ['./hotel-detail.component.css']
 })
-export class HotelDetailComponent implements OnInit {
+export class HotelDetailComponent implements OnInit, OnDestroy {
 
   public hotel: IHotel | undefined = <IHotel>{};
+  public subscriptions: Subscription = new Subscription();
 
   constructor(
     private route: ActivatedRoute,
@@ -22,20 +24,27 @@ export class HotelDetailComponent implements OnInit {
   ngOnInit(): void {
     const id: number | any = this.route.snapshot.paramMap.get('id');
 
-    this.hotelService.getHotels()
+    this.subscriptions.add(this.hotelService.getHotels()
       .pipe(
         map((hotels: IHotel[]) => hotels.find(hotel => hotel.id == id))
       )
       .subscribe((hotel: IHotel | undefined) => {
         this.hotel = hotel;
         // console.log('hotel: ', this.hotel);
-      });
+      }));
 
     // console.log(id);
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   public backToList(): void {
     this.router.navigate(['/hotels']);
   }
 
+
 }
+
+
