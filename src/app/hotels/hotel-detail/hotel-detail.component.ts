@@ -26,7 +26,7 @@ export class HotelDetailComponent implements OnInit {
       .pipe(
         map((hotels: IHotel[]) => hotels.find(hotel => hotel.id == id))
       )
-      .subscribe((hotel: IHotel) => {
+      .subscribe((hotel: IHotel | undefined) => {
         this.hotel = hotel;
         // console.log('hotel: ', this.hotel);
       });
