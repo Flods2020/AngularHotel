@@ -8,7 +8,7 @@ import { Component, EventEmitter, Input, OnChanges, Output } from "@angular/core
 
 export class StarRatingComponent implements OnChanges {
 
-    public starWidth: number|undefined;
+    public starWidth: number | undefined;
 
     @Input()
     public rating: number = 0;
@@ -20,7 +20,7 @@ export class StarRatingComponent implements OnChanges {
         this.starWidth = this.rating * 125 / 5;
     }
 
-    public sendRating():void {
+    public sendRating(): void {
         this.starRatingClicked.emit(`La note est de ${this.rating}`);
     }
 }

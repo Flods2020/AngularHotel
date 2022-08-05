@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of, Subscription } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { IHotel } from '../shared/models/hotel';
 import { HotelListService } from '../shared/services/hotel-list.service';
 
@@ -10,10 +10,13 @@ import { HotelListService } from '../shared/services/hotel-list.service';
   templateUrl: './hotel-detail.component.html',
   styleUrls: ['./hotel-detail.component.css']
 })
-export class HotelDetailComponent implements OnInit, OnDestroy {
+export class HotelDetailComponent implements OnInit /*OnDestroy*/ {
 
-  public hotel: IHotel | undefined = <IHotel>{};
-  public subscriptions: Subscription = new Subscription();
+  public hotel: IHotel = <IHotel>{};
+  public hotel$: Observable<IHotel | any> = of(<IHotel>{});
+  // public test = Promise.resolve('variable test de Promesse asynchrone'); //à utiliser dans le template avec le |async
+  // public test = of('variable test d\'Observable');
+  // public subscriptions: Subscription = new Subscription();
 
   constructor(
     private route: ActivatedRoute,
@@ -24,21 +27,23 @@ export class HotelDetailComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const id: number | any = this.route.snapshot.paramMap.get('id');
 
-    this.subscriptions.add(this.hotelService.getHotels()
+    this.hotel$ = this.hotelService.getHotels()
       .pipe(
-        map((hotels: IHotel[]) => hotels.find(hotel => hotel.id == id))
-      )
-      .subscribe((hotel: IHotel | undefined) => {
-        this.hotel = hotel;
-        // console.log('hotel: ', this.hotel);
-      }));
+        map((hotels: IHotel[] | any) => hotels.find((hotel: { id: any; }) => hotel.id == id)),
+        tap((hotel: IHotel) => console.log(hotel))
+      );
+
+    // .subscribe((hotel: IHotel) => {
+    //   this.hotel = hotel;
+    //   // console.log('hotel: ', this.hotel);
+    // }));
 
     // console.log(id);
   }
 
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
-  }
+  // ngOnDestroy(): void {
+  //   this.subscriptions.unsubscribe();
+  // }
 
   public backToList(): void {
     this.router.navigate(['/hotels']);

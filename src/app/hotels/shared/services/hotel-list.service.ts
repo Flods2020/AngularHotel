@@ -28,7 +28,6 @@ export class HotelListService {
     }
     return this.getHotels().pipe(
       catchError(this.handleError),
-
       map((hotels) => hotels.find((hotel) => hotel.id == id))
       // tap(hotels => console.log("Hotel by id", hotels))
     );

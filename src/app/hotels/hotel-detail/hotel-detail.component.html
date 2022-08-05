@@ -1,7 +1,8 @@
 <div class="container">
-    <div class="card" *ngIf="hotel">
+    <div class="card" *ngIf="(hotel$ | async) as hotel">
         <div class="card-header text-white bg-info">
             {{ hotel.hotelName | uppercase }}
+            <!--{{ test | async }} dans le .ts avec la Promise.resolve() -->
         </div>
 
         <div class="card-body">
@@ -20,9 +21,9 @@
                         <div class="col-md-4">Prix:</div>
                         <div class="col-md-8">
                             {{
-                                hotel.price
-                                    | currency: "EUR":"symbol":"1.2-2":"fr"
-                                    | replaceComma
+                            hotel.price
+                            | currency: "EUR":"symbol":"1.2-2":"fr"
+                            | replaceComma
                             }}
                         </div>
                     </div>
@@ -30,17 +31,13 @@
                         <div class="col-md-4">Note:</div>
                         <div class="col-md-8">
                             <app-star-rating [rating]="hotel.rating"></app-star-rating>
-                        </div>                        
+                        </div>
                     </div>
                 </div>
 
                 <div class="col-md-4">
-                    <img
-                        [src]="hotel.imageUrl"
-                        [title]="hotel.hotelName | uppercase"
-                        [alt]="hotel.hotelName"
-                        class="card-img-top"
-                    />
+                    <img [src]="hotel.imageUrl" [title]="hotel.hotelName | uppercase" [alt]="hotel.hotelName"
+                        class="card-img-top" />
                 </div>
             </div>
         </div>
@@ -51,6 +48,4 @@
                 retour à la liste
             </button>
         </div>
-        </div>
-
-
+    </div>
