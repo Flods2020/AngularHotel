@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { map, Observable, of } from "rxjs";
+import { catchError, EMPTY, map, Observable, of, throwError } from "rxjs";
 import { IHotel } from "../shared/models/hotel";
 import { HotelListService } from "../shared/services/hotel-list.service";
 
@@ -60,7 +60,14 @@ export class HotelListComponent implements OnInit {
 
       ngOnInit() {
             // console.log('Méthode OnInit() démarrée au chargement du component');            
-            this.hotels$ = this.hotelListService.getHotels();
+            this.hotels$ = this.hotelListService.getHotels().pipe(
+                  catchError((err) => {
+                        this.errMsg = err
+                        // return of([]);
+                        // return throwError(err);
+                        return EMPTY; // renvoie un Observable<never> donc vide
+                  })
+            );
             this.filteredHotels$ = this.hotels$;
 
             this.hotelListService.getHotels().subscribe({
