@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { catchError, combineLatest, EMPTY, forkJoin, map, Observable, of, throwError, withLatestFrom } from "rxjs";
+import { catchError, combineLatest, EMPTY, filter, forkJoin, map, Observable, of, range, take, tap, throwError, withLatestFrom } from "rxjs";
 import { IHotel } from "../shared/models/hotel";
 import { HotelListService } from "../shared/services/hotel-list.service";
 
@@ -70,6 +70,19 @@ export class HotelListComponent implements OnInit {
             a$.pipe(
                   withLatestFrom(b$, c$)
             ).subscribe((val) => console.log('withLatestFrom() ', val));
+
+            /*TEST MANIP
+            const oneTen = ["1", "2", "3", "4", "5", "6"];
+            const oneTenNew: number[] = [];
+            for (const val of oneTen) {
+                  const valInt = parseInt(val);
+                  console.log(val);
+                  oneTenNew.push(valInt);
+            }
+            of(oneTenNew).pipe(
+                  map((vals: number[]) => vals.map((v: number) => v + 4))
+            ).subscribe(v => console.log("one Ten New ", v))*/
+
 
             // console.log('Méthode OnInit() démarrée au chargement du component');            
             this.hotels$ = this.hotelListService.getHotels().pipe(
