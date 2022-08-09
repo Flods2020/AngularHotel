@@ -6,10 +6,12 @@ export interface IHotel {
     imageUrl: string;
     rating: number;
     tags?: string[];
+    categoryId?: number;
+    category?: string;
 }
 
 export class Hotel implements IHotel {
-    
+
     constructor(
         public id: number,
         public hotelName: string,
@@ -18,7 +20,7 @@ export class Hotel implements IHotel {
         public imageUrl: string,
         public rating: number,
         public tags: string[],
-    ) {}
+    ) { }
 
     getNewPrice(price: number): number {
         return price - 5;

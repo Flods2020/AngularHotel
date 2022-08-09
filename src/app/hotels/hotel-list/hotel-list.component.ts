@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { catchError, EMPTY, map, Observable, of, throwError } from "rxjs";
+import { catchError, combineLatest, EMPTY, forkJoin, map, Observable, of, throwError } from "rxjs";
 import { IHotel } from "../shared/models/hotel";
 import { HotelListService } from "../shared/services/hotel-list.service";
 
@@ -59,6 +59,14 @@ export class HotelListComponent implements OnInit {
       constructor(private hotelListService: HotelListService) { }
 
       ngOnInit() {
+
+            const a$ = of(1, 2, 3);
+            const b$ = of(11, 12, 13);
+            const c$ = of(21, 22, 23);
+
+            combineLatest([a$, b$, c$]).subscribe((val) => console.log('combineLatest()', val));
+            forkJoin([a$, b$, c$]).subscribe((val) => console.log('forkJoin()', val));
+
             // console.log('Méthode OnInit() démarrée au chargement du component');            
             this.hotels$ = this.hotelListService.getHotels().pipe(
                   catchError((err) => {

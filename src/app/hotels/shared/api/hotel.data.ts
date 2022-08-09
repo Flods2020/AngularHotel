@@ -11,16 +11,18 @@ export class HotelData implements InMemoryDbService {
                 "price": 230.5,
                 "imageUrl": "assets/img/hotel-room.jpg",
                 "rating": 3.5,
-                "tags": ['nouveau']
-          },
-          {
+                "tags": ['nouveau'],
+                "categoryId": 1
+            },
+            {
                 "id": 2,
                 "hotelName": "Marakech",
                 "description": "Profitez de la vue sur les montagnes",
                 "price": 145.5,
                 "imageUrl": "assets/img/the-interior.jpg",
                 "rating": 5,
-                "tags": ['nouveau']
+                "tags": ['nouveau'],
+                "categoryId": 0
             },
             {
                 "id": 3,
@@ -29,8 +31,9 @@ export class HotelData implements InMemoryDbService {
                 "price": 120.12,
                 "imageUrl": "assets/img/indoors.jpg",
                 "rating": 4,
-                "tags": ['nouveau']
-                },
+                "tags": ['nouveau'],
+                "categoryId": 2
+            },
             {
                 "id": 4,
                 "hotelName": "Cape town city",
@@ -38,12 +41,13 @@ export class HotelData implements InMemoryDbService {
                 "price": 135.12,
                 "imageUrl": "assets/img/window.jpg",
                 "rating": 2.5,
-                "tags": ['nouveau']
-                }
+                "tags": ['nouveau'],
+                "categoryId": 3
+            }
         ];
         return { hotels };
     }
-     
+
     genId(hotels: IHotel[]): number {
         return hotels.length > 0 ? Math.max(...hotels.map(hotel => hotel.id)) + 1 : 1;
     }

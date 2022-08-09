@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, Observable, tap, throwError, of } from 'rxjs';
+import { Category } from '../models/category';
 import { IHotel } from '../models/hotel';
 
 @Injectable({
@@ -70,6 +71,27 @@ export class HotelListService {
       rating: 0,
       imageUrl: '',
     };
+  }
+
+  public getCategory(): Observable<Category[]> {
+    return of([
+      {
+        id: 0,
+        name: 'Motel'
+      }, {
+        id: 1,
+        name: 'Auberge'
+      }, {
+        id: 2,
+        name: 'Palace'
+      }, {
+        id: 3,
+        name: 'Parc'
+      }, {
+        id: 4,
+        name: 'Bungalow'
+      }
+    ])
   }
 
   private handleError(error: HttpErrorResponse) {
