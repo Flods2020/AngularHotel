@@ -37,7 +37,7 @@
         <!-- OU property binding (avec les [], il n'y a plus besoin des {{}})-->
         <img class="card-img-top" [src]="hotel.imageUrl" [title]="hotel.hotelName" [alt]="hotel.hotelName" />
         <div class="card-body">
-          <h5 class="card-title">{{ hotel.hotelName | uppercase }}</h5>
+          <h5 class="card-title">{{ hotel.hotelName | uppercase }} - {{ hotel.category}} </h5>
           <p class="card-text">{{ hotel.description }}</p>
           <p class="card-text">
             {{

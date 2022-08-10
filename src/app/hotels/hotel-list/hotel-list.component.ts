@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { catchError, combineLatest, EMPTY, filter, forkJoin, map, Observable, of, range, take, tap, throwError, withLatestFrom } from "rxjs";
+import { catchError, /*combineLatest,*/ EMPTY, filter, /*forkJoin,*/ map, Observable, of, range, take, tap, throwError, /*withLatestFrom*/ } from "rxjs";
 import { IHotel } from "../shared/models/hotel";
 import { HotelListService } from "../shared/services/hotel-list.service";
 
@@ -64,12 +64,14 @@ export class HotelListComponent implements OnInit {
             const b$ = of(11, 12, 13);
             const c$ = of(21, 22, 23);
 
+            /*
             combineLatest([a$, b$, c$]).subscribe((val) => console.log('combineLatest()', val));
             forkJoin([a$, b$, c$]).subscribe((val) => console.log('forkJoin()', val));
 
             a$.pipe(
                   withLatestFrom(b$, c$)
             ).subscribe((val) => console.log('withLatestFrom() ', val));
+            */
 
             /*TEST MANIP
             const oneTen = ["1", "2", "3", "4", "5", "6"];
@@ -85,7 +87,8 @@ export class HotelListComponent implements OnInit {
 
 
             // console.log('Méthode OnInit() démarrée au chargement du component');            
-            this.hotels$ = this.hotelListService.getHotels().pipe(
+            // this.hotels$ = this.hotelListService.getHotels().pipe(
+            this.hotels$ = this.hotelListService.hotelsWithCategories$.pipe(
                   catchError((err) => {
                         this.errMsg = err
                         // return of([]);
