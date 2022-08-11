@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { catchError, /*combineLatest,*/ EMPTY, filter, /*forkJoin,*/ map, Observable, of, range, take, tap, throwError, /*withLatestFrom*/ } from "rxjs";
+import { BehaviorSubject, catchError, combineLatest, EMPTY, filter, /*forkJoin,*/ map, Observable, of, range, Subject, take, tap, throwError, /*withLatestFrom*/ } from "rxjs";
 import { IHotel } from "../shared/models/hotel";
 import { HotelListService } from "../shared/services/hotel-list.service";
 
@@ -53,6 +53,7 @@ export class HotelListComponent implements OnInit {
       private _hotelFilter = '';
       public filteredHotels: IHotel[] = [];
       public filteredHotels$: Observable<IHotel[]> = of([]);
+      public filterSubject: Subject<string> = new BehaviorSubject<string>('');
       public receivedRating: string | undefined;
       public errMsg: string | undefined;
 
@@ -60,11 +61,11 @@ export class HotelListComponent implements OnInit {
 
       ngOnInit() {
 
+            /*
             const a$ = of(1, 2, 3);
             const b$ = of(11, 12, 13);
             const c$ = of(21, 22, 23);
-
-            /*
+            
             combineLatest([a$, b$, c$]).subscribe((val) => console.log('combineLatest()', val));
             forkJoin([a$, b$, c$]).subscribe((val) => console.log('forkJoin()', val));
 
@@ -86,6 +87,45 @@ export class HotelListComponent implements OnInit {
             ).subscribe(v => console.log("one Ten New ", v))*/
 
 
+            /* SUBJECT ET BEHAVIORSUBJECT
+            const subject = new Subject<number>();
+            const bSubject = new BehaviorSubject<number>(0);
+
+            subject.subscribe({
+                  next: (value) => console.log('A ', value)
+            })
+            subject.subscribe({
+                  next: (value) => console.log('B ', value)
+            })
+
+            bSubject.subscribe({
+                  next: (value) => console.warn('A ', value)
+            })
+            bSubject.subscribe({
+                  next: (value) => console.warn('B ', value)
+            })
+
+            subject.next(1);
+            subject.next(2);
+            subject.next(3);
+            subject.next(4);
+
+            bSubject.next(1);
+            bSubject.next(2);
+            bSubject.next(3);
+
+            subject.subscribe({
+                  next: (value) => console.log('C ', value) // Ca n'affichera pas les précédents subject.next()
+            })
+            bSubject.subscribe({
+                  next: (value) => console.warn('C ', value) // Ca affiche le dernier bSuject avant la création du subscribe()
+            })
+
+            subject.next(80000);
+            bSubject.next(80000);
+            */
+
+
             // console.log('Méthode OnInit() démarrée au chargement du component');            
             // this.hotels$ = this.hotelListService.getHotels().pipe(
             this.hotels$ = this.hotelListService.hotelsWithCategories$.pipe(
@@ -96,7 +136,9 @@ export class HotelListComponent implements OnInit {
                         return EMPTY; // renvoie un Observable<never> donc vide
                   })
             );
-            this.filteredHotels$ = this.hotels$;
+            // this.filteredHotels$ = this.hotels$;
+            this.filteredHotels$ = this.createFilterHotels(this.filterSubject, this.hotels$);
+            this.hotelFilter = '';
 
             this.hotelListService.getHotels().subscribe({
                   next: hotels => {
@@ -106,6 +148,11 @@ export class HotelListComponent implements OnInit {
                   error: err => this.errMsg = err
             });
             this._hotelFilter = '';
+      }
+
+      public filterChange(value: string): void {
+            console.log('value ', value);
+            this.filterSubject.next(value);
       }
 
       public toggleIsNewBadge(): void {
@@ -119,6 +166,8 @@ export class HotelListComponent implements OnInit {
       public set hotelFilter(filter: string) {
             this._hotelFilter = filter;
 
+            /*
+            ANCIENNE LOGIQUE DU createFilterHotel()
             if (this.hotelFilter) {
                   this.filteredHotels$ = this.hotels$.pipe(
                         map((hotels: IHotel[]) => this.filterHotels(filter, hotels))
@@ -126,7 +175,19 @@ export class HotelListComponent implements OnInit {
             } else {
                   this.filteredHotels$ = this.hotels$;
             }
+            */
+
             // this.filteredHotels = this.hotelFilter ? this.filterHotels(this.hotelFilter) : this.hotels;
+      }
+
+      public createFilterHotels(filter$: Observable<string>, hotels$: Observable<IHotel[]>): Observable<IHotel[]> {
+            return combineLatest(hotels$, filter$, (hotels: IHotel[], filter: string) => {
+                  if (filter == '') return hotels;
+
+                  return hotels.filter(
+                        (hotel: IHotel) => hotel.hotelName.toLocaleLowerCase().indexOf(filter) !== -1
+                  );
+            });
       }
 
       public receiveRatingClicked(message: string): void {
