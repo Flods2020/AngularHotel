@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { BehaviorSubject, catchError, combineLatest, EMPTY, filter, /*forkJoin,*/ map, Observable, of, range, Subject, take, tap, throwError, /*withLatestFrom*/ } from "rxjs";
+import { BehaviorSubject, catchError, combineLatest, EMPTY, filter, interval, /*forkJoin,*/ map, Observable, of, range, shareReplay, Subject, take, tap, throwError, /*withLatestFrom*/ } from "rxjs";
 import { IHotel } from "../shared/models/hotel";
 import { HotelListService } from "../shared/services/hotel-list.service";
 
@@ -56,6 +56,7 @@ export class HotelListComponent implements OnInit {
       public filterSubject: Subject<string> = new BehaviorSubject<string>('');
       public receivedRating: string | undefined;
       public errMsg: string | undefined;
+      // private a$: Observable<number> | any; pour le shareReplay()
 
       constructor(private hotelListService: HotelListService) { }
 
@@ -125,6 +126,16 @@ export class HotelListComponent implements OnInit {
             bSubject.next(80000);
             */
 
+            /*
+             SHAREREPLAY()
+            this.a$ = interval(1000).pipe(
+                  take(9),
+                  shareReplay(4)
+            );
+
+            this.a$.subscribe(console.warn);
+            */
+
 
             // console.log('Méthode OnInit() démarrée au chargement du component');            
             // this.hotels$ = this.hotelListService.getHotels().pipe(
@@ -149,6 +160,13 @@ export class HotelListComponent implements OnInit {
             });
             this._hotelFilter = '';
       }
+
+      /*
+      Pour le SHAREREPLAY()
+      public shareReplayTest(): void {
+            this.a$.subscribe(console.log)
+      }
+      */
 
       public filterChange(value: string): void {
             console.log('value ', value);
@@ -202,5 +220,4 @@ export class HotelListComponent implements OnInit {
             );
             return res;
       }
-
 }

@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormControlName, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { debounce, debounceTime, EMPTY, from, fromEvent, merge, Observable, timer } from 'rxjs';
+import { catchError, debounce, debounceTime, EMPTY, from, fromEvent, merge, Observable, timer } from 'rxjs';
 import { IHotel } from '../shared/models/hotel';
 import { HotelListService } from '../shared/services/hotel-list.service';
 import { GlobalGenericValidator } from '../shared/validators/global-generic.validator';
@@ -166,12 +166,13 @@ export class HotelEditComponent implements OnInit, AfterViewInit {
           this.hotelService.createHotel(hotel).subscribe({
             next: () => this.saveCompleted(),
             error: (err) => this.errorMessage = err
-          });
+
+          })
         } else {
           this.hotelService.updateHotel(hotel).subscribe({
             next: () => this.saveCompleted(),
             error: (err) => this.errorMessage = err
-          });
+          })
           console.log('saveHotel(): ', this.hotelForm.value);
         }
       }
@@ -179,6 +180,7 @@ export class HotelEditComponent implements OnInit, AfterViewInit {
       this.errorMessage = 'Corrigez les erreurs svp';
     }
     console.log('saveHotel(): ', this.hotelForm.value);
+
   }
 
   public deleteHotel(): void {

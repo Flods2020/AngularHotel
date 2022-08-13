@@ -5,6 +5,8 @@
   <h2 style="color: #77e010"><i>Hotel list component</i></h2>
   <h2 *ngIf="hotels && hotels.length > 0">{{ title }}</h2>
 
+  <!-- <button class="btn btn-primary" (click)="shareReplayTest()">Sub</button> pour le shareReplay()-->
+
   <button class="btn btn-primary d-flex" (click)="toggleIsNewBadge()">
     <span class="material-icons">
       {{ showBadge ? "visibility_off" : "visibility" }}
