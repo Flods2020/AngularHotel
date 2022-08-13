@@ -166,7 +166,6 @@ export class HotelEditComponent implements OnInit, AfterViewInit {
           this.hotelService.createHotel(hotel).subscribe({
             next: () => this.saveCompleted(),
             error: (err) => this.errorMessage = err
-
           })
         } else {
           this.hotelService.updateHotel(hotel).subscribe({
@@ -178,9 +177,10 @@ export class HotelEditComponent implements OnInit, AfterViewInit {
       }
     } else {
       this.errorMessage = 'Corrigez les erreurs svp';
+      console.log('saveHotel(): ', this.hotelForm.value);
     }
-    console.log('saveHotel(): ', this.hotelForm.value);
 
+    console.log('saveHotel(): ', this.hotelForm.value);
   }
 
   public deleteHotel(): void {

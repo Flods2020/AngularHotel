@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, map, Observable, tap, throwError, of, combineLatest } from 'rxjs';
+import { catchError, map, Observable, tap, throwError, of, combineLatest, shareReplay } from 'rxjs';
 import { Category } from '../models/category';
 import { IHotel } from '../models/hotel';
 
@@ -20,7 +20,9 @@ export class HotelListService {
         ...hotel,
         price: hotel.price * .85,
         category: categories.find(category => category.id === hotel.categoryId)?.name
-      }) as IHotel))
+      }) as IHotel)
+    ),
+    shareReplay(1)
   );
 
   constructor(private http: HttpClient) { }
@@ -31,9 +33,10 @@ export class HotelListService {
       // map((hotels: IHotel[]) => hotels.map(
       //   hotel => ({
       //     ...hotel,
-      //     price: hotel.price * 10
+      //     // price: hotel.price * 10
       //   }) as IHotel)),
       tap((hotels) => console.log('getHotels(): ', hotels)),
+      // tap((hotelsWithCategories$) => console.log('getHotelsWithCat(): ', hotelsWithCategories$)),
       catchError(this.handleError)
     );
   }
