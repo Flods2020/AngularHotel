@@ -37,7 +37,6 @@ export class HotelEditComponent implements OnInit, AfterViewInit {
       pattern: 'Le prix de l\'hôtel doit être un nombre'
     },
     rating: {
-      required: 'Veuilez donner une note comprise entre 1 et 5 svp',
       range: 'Donnez une note entre 1 et 5'
     }
   };
@@ -60,8 +59,7 @@ export class HotelEditComponent implements OnInit, AfterViewInit {
         [Validators.required, Validators.minLength(4)]],
       price: ['',
         [Validators.required, Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
-      rating: ['',
-        Validators.required, NumberValidator.range(1, 5)],
+      rating: ['', NumberValidator.range(1, 5)],
       description: [''],
       tags: this.fb.array([]),
     });
@@ -160,7 +158,7 @@ export class HotelEditComponent implements OnInit, AfterViewInit {
         const hotel: IHotel = {
           ...this.hotel,
           ...this.hotelForm.value,
-        };
+        }
 
         if (hotel.id == 0) {
           this.hotelService.createHotel(hotel).subscribe({
@@ -177,7 +175,7 @@ export class HotelEditComponent implements OnInit, AfterViewInit {
       }
     } else {
       this.errorMessage = 'Corrigez les erreurs svp';
-      console.log('saveHotel(): ', this.hotelForm.value);
+      console.log('saveHotel(): error ', this.hotelForm.value);
     }
 
     console.log('saveHotel(): ', this.hotelForm.value);

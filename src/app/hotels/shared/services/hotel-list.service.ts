@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, map, Observable, tap, throwError, of, combineLatest, shareReplay } from 'rxjs';
+import { catchError, map, Observable, tap, throwError, of, combineLatest, shareReplay, Subject } from 'rxjs';
 import { Category } from '../models/category';
 import { IHotel } from '../models/hotel';
 
@@ -24,6 +24,9 @@ export class HotelListService {
     ),
     shareReplay(1)
   );
+
+  private hotelInsertedSubject = new Subject<IHotel>();
+  public hotelInserted$ = this.hotelInsertedSubject.asObservable();
 
   constructor(private http: HttpClient) { }
 
