@@ -1,5 +1,6 @@
+import { HttpClient } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
-import { BehaviorSubject, catchError, combineLatest, EMPTY, filter, interval, /*forkJoin,*/ map, Observable, of, range, shareReplay, Subject, take, tap, throwError, /*withLatestFrom*/ } from "rxjs";
+import { BehaviorSubject, catchError, combineLatest, EMPTY, filter, interval, /*forkJoin,*/ map, mergeAll, Observable, of, range, shareReplay, Subject, take, tap, throwError, /*withLatestFrom*/ } from "rxjs";
 import { IHotel } from "../shared/models/hotel";
 import { HotelListService } from "../shared/services/hotel-list.service";
 
@@ -58,7 +59,9 @@ export class HotelListComponent implements OnInit {
       public errMsg: string | undefined;
       // private a$: Observable<number> | any; pour le shareReplay()
 
-      constructor(private hotelListService: HotelListService) { }
+      constructor(
+            private hotelListService: HotelListService,
+            private http: HttpClient) { }
 
       ngOnInit() {
 
@@ -79,9 +82,14 @@ export class HotelListComponent implements OnInit {
             const oneTen = ["1", "2", "3", "4", "5", "6"];
             const oneTenNew: number[] = [];
             for (const val of oneTen) {
+                  oneTenNew.push(parseInt(val));
+                  
+                  OU
+                  
                   const valInt = parseInt(val);
                   console.log(val);
                   oneTenNew.push(valInt);
+
             }
             of(oneTenNew).pipe(
                   map((vals: number[]) => vals.map((v: number) => v + 4))
@@ -137,9 +145,28 @@ export class HotelListComponent implements OnInit {
             */
 
 
-            // console.log('Méthode OnInit() démarrée au chargement du component');            
+            // console.log('Méthode OnInit() démarrée au chargement du component'); 
+
+            const hotelTest$ = of(1, 2, 4).pipe(
+                  map((val) => this.http.get<IHotel>(`api/hotels/${val}`)),
+                  mergeAll()
+            );
+
+            /*
+            OBSERVABLE DE HAUTS RANGS c'est ~= (subscribe(subscribe())), trop couteux. Il faut utiliser mergeAll()
+             const hotelTest$ = of(1, 2, 4).pipe(
+                  map((val) => this.http.get<IHotel>(`api/hotels/${val}`))
+            );
+            hotelTest$.subscribe((elem) => {
+                  console.log('elem ', elem);// elem représente la liste d'Observable
+                  elem.subscribe(value => { // value représente l'élément
+                        console.log('value de elem = ', value);
+                  })
+            });
+            */
+
             // this.hotels$ = this.hotelListService.getHotels().pipe(
-            this.hotels$ = this.hotelListService.hotelsWithCategories$.pipe(
+            this.hotels$ = this.hotelListService.hotelsWithAdd$.pipe(
                   catchError((err) => {
                         this.errMsg = err
                         // return of([]);
