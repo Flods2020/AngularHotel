@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
-import { BehaviorSubject, catchError, combineLatest, EMPTY, filter, interval, /*forkJoin,*/ map, mergeAll, Observable, of, range, shareReplay, Subject, take, tap, throwError, /*withLatestFrom*/ } from "rxjs";
+import { BehaviorSubject, catchError, combineLatest, /*concatMap,*/ EMPTY, /*filter,*/ /*interval,*/ /*forkJoin,*/ /*map,*/ /*mergeAll,*/ mergeMap, Observable, of, /*range,*/ /*shareReplay,*/ Subject, switchMap, /*take,*/ /*tap,*/ /*throwError,*/ /*withLatestFrom*/ } from "rxjs";
 import { IHotel } from "../shared/models/hotel";
 import { HotelListService } from "../shared/services/hotel-list.service";
 
@@ -148,8 +148,16 @@ export class HotelListComponent implements OnInit {
             // console.log('Méthode OnInit() démarrée au chargement du component'); 
 
             const hotelTest$ = of(1, 2, 4).pipe(
-                  map((val) => this.http.get<IHotel>(`api/hotels/${val}`)),
-                  mergeAll()
+                  // map((val) => this.http.get<IHotel>(`api/hotels/${val}`)),
+                  // mergeAll()
+
+                  // OU
+
+                  mergeMap(val => this.http.get<IHotel>(`api/hotels/${val}`)),
+                  // concatMap(val => this.http.get<IHotel>(`api/hotels/${val}`)) est un peu plus lent que mergeMap()
+                  // mais est plus pratique pour suivre un ordre (obs$1 se termine puis obs$2 se lance)
+                  //exhaustMap(val => this.http.get<IHotel>(`api/hotels/${val}`)) renvoie le premier élément de l'Observable
+                  //switchMap(val => this.http.get<IHotel>(`api/hotels/${val}`)) renvoie le dernier élément de l'Observable
             );
 
             /*
